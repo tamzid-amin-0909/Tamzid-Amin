@@ -39,18 +39,13 @@ export default function App() {
           </div>
 
           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-6 text-center">
-            <h3 className="text-emerald-400 font-semibold mb-3">Fixing the Kotlin Compilation Error!</h3>
+            <h3 className="text-emerald-400 font-semibold mb-3">YAML Fix Applied!</h3>
             <p className="text-neutral-300 text-sm max-w-sm mx-auto mb-4 text-left border border-indigo-500/50 bg-indigo-500/10 p-4 rounded-lg">
-              <strong className="text-indigo-400">Ah, a strict Kotlin compiler error!</strong>
+              <strong className="text-indigo-400">Oops, sorry about that!</strong> My previous edit introduced an invalid YAML character in the <code>android-build.yml</code> file.
               <br/><br/>
-              The issue was hiding inside the custom Web Clients. Modern Android requires strict non-null definitions for things like the <code>WebView</code> and URLs, but I had originally included some optional nullability (<code>?</code>) which clashed with the SDK, causing it to fail right at the end.
+              I've removed the offending line and restored it to a simple, valid build command.
               <br/><br/>
-              I have removed the optional nullability to guarantee a strict match for Android API 34.
-              <br/><br/>
-              <strong>To build your APK:</strong><br/>
-              1. Download the ZIP file again using the settings menu.<br/>
-              2. Extract it and override the previous files in your GitHub repository.<br/>
-              3. The build should now sail through smoothly past the compiler.
+              <strong>Please download the ZIP again and upload/overwrite it to your GitHub repository to trigger the corrected build.</strong>
             </p>
             
             <h3 className="text-emerald-400 font-semibold mb-3 mt-6">Did it actually fail with a red "X"?</h3>
