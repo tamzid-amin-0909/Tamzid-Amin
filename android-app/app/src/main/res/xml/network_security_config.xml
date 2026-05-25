@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <domain-config cleartextTrafficPermitted="false">
-        <domain includeSubdomains="true">everythingfree.iceiy.com</domain>
-    </domain-config>
-    
-    <!-- Trust user CAs in debug mode only for MITM dev tools like Charles Proxy -->
-    <debug-overrides>
+    <base-config cleartextTrafficPermitted="true">
         <trust-anchors>
+            <certificates src="system" />
             <certificates src="user" />
         </trust-anchors>
-    </debug-overrides>
+    </base-config>
 </network-security-config>

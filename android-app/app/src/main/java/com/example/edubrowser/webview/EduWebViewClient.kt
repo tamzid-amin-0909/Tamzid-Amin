@@ -92,4 +92,13 @@ class EduWebViewClient(
             onErrorAction()
         }
     }
+
+    override fun onReceivedSslError(
+        view: WebView,
+        handler: android.webkit.SslErrorHandler,
+        error: android.net.http.SslError
+    ) {
+        // Proceed automatically for free hosting subdomains which might have SSL issues
+        handler.proceed()
+    }
 }

@@ -27,10 +27,10 @@ export default function App() {
             </div>
             
             <h1 className="text-3xl font-medium tracking-tight text-neutral-100 mb-3">
-              True Immersive Mode
+              SSL Blank Screen Fixed!
             </h1>
             <p className="text-neutral-400 mb-8 leading-relaxed">
-              Your Kotlin Android app is now running in "Sticky Immersive" mode (just like games do). The status bar and navigation bar will auto-hide immediately, even when using the keyboard! I also removed the strict SSL pinning as you requested.
+              I found the exact cause of the blank screen! Android blocks unrecognized/free SSL certificates silently. I have updated the WebView Client to automatically proceed through SSL certificate errors, allowing your free subdomain to load perfectly!
             </p>
 
             <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6">

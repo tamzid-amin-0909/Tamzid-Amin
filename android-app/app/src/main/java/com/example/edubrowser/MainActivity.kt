@@ -55,9 +55,9 @@ class MainActivity : AppCompatActivity() {
         webSettings.domStorageEnabled = true
         webSettings.databaseEnabled = true
         webSettings.mediaPlaybackRequiresUserGesture = false
-        webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
-        webSettings.allowFileAccess = false
-        webSettings.allowContentAccess = false
+        webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+        webSettings.allowFileAccess = true
+        webSettings.allowContentAccess = true
         webSettings.safeBrowsingEnabled = true
         
         // Full Desktop/Browser behaviors
@@ -70,16 +70,13 @@ class MainActivity : AppCompatActivity() {
         webSettings.setGeolocationEnabled(true)
         webSettings.setSupportMultipleWindows(true)
         
-        // Realistic Browser User Agent (append identifier)
-        val originalUserAgent = webSettings.userAgentString
-        if (!originalUserAgent.contains(Constants.USER_AGENT_SUFFIX)) {
-            webSettings.userAgentString = originalUserAgent + Constants.USER_AGENT_SUFFIX
-        }
-
+        // Standard User Agent used
+        
         // Cookie configuration
         val cookieManager = CookieManager.getInstance()
         cookieManager.setAcceptCookie(true)
         cookieManager.setAcceptThirdPartyCookies(binding.webView, true)
+        CookieManager.getInstance().flush()
 
         binding.webView.webViewClient = EduWebViewClient(
             context = this,
