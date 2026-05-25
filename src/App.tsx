@@ -27,10 +27,10 @@ export default function App() {
             </div>
             
             <h1 className="text-3xl font-medium tracking-tight text-neutral-100 mb-3">
-              Application Updated
+              App Ready & Hardened
             </h1>
             <p className="text-neutral-400 mb-8 leading-relaxed">
-              Your Kotlin Android application has been upgraded with immersive fullscreen capabilities and native video support.
+              Your Kotlin Android app has been fully modernized, secured with real SSL Pinning, and immersive-mode keyboard issues fixed.
             </p>
 
             <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6">
