@@ -1,4 +1,4 @@
-package com.example.edubrowser.webview
+package com.eduzod.app.webview
 
 import android.content.Context
 import android.content.Intent
@@ -9,7 +9,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.browser.customtabs.CustomTabsIntent
-import com.example.edubrowser.constants.Constants
+import com.eduzod.app.constants.Constants
 
 class EduWebViewClient(
     private val context: Context,
