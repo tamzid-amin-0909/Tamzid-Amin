@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">EduBrowser</string>
+    <string name="title_offline">No Internet Connection</string>
+    <string name="message_offline">Please check your network settings and try again.</string>
+    <string name="action_retry">Retry</string>
+</resources>

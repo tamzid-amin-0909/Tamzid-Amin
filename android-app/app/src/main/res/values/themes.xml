@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.EduBrowser" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#6750A4</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+    </style>
+    <style name="Theme.EduBrowser.NoActionBar" parent="Theme.EduBrowser" />
+</resources>

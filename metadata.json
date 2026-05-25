@@ -1,0 +1,6 @@
+{
+  "name": "EduBrowser - Android App",
+  "description": "Native Android educational browser with Hard SSL Pinning and Custom Tabs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
