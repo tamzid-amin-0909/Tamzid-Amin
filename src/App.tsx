@@ -39,18 +39,22 @@ export default function App() {
           </div>
 
           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-6 text-center">
-            <h3 className="text-emerald-400 font-semibold mb-3">One Last Fix for GitHub Actions!</h3>
+            <h3 className="text-emerald-400 font-semibold mb-3">Manifest & Icon Fixed!</h3>
             <p className="text-neutral-300 text-sm max-w-sm mx-auto mb-4 text-left border border-indigo-500/50 bg-indigo-500/10 p-4 rounded-lg">
-              <strong className="text-indigo-400">I found the issue!</strong> The background error you had earlier (<code>Cannot mutate the dependencies...</code>) was due to an incompatibility between the Android compiler plugin and GitHub's latest runner environment.
+              <strong className="text-indigo-400">Found it!</strong> You were missing the default app icons (<code>ic_launcher</code>), and Gradle 8+ doesn't like the package name inside <code>AndroidManifest.xml</code>.
               <br/><br/>
-              I have permanently fixed the compiler versions!
+              I have:
+              <br/>
+              1. Removed the old package declaration in the manifest.
+              <br/>
+              2. Created a default app icon in <code>res/drawable/ic_launcher.xml</code>.
+              <br/>
+              3. Updated the manifest to use this new valid icon so AAPT string linking finally works.
               <br/><br/>
               <strong>To finally get your APK:</strong><br/>
               1. Download the ZIP file again using the gear menu above.<br/>
               2. Extract it and upload/overwrite all the files in your GitHub repository, just like before.<br/>
-              3. The build will start automatically, and this time it will successfully skip that error!<br/>
-              <br/>
-              <span className="text-xs text-neutral-400">(Note: that Node.js 20 warning will still appear at the very bottom, but you can completely ignore it. Your app will build successfully now!)</span>
+              3. The build will start automatically, and this time there shouldn't be any resource errors!<br/>
             </p>
             <ol className="text-neutral-300 text-sm space-y-3 text-left list-decimal list-inside max-w-sm mx-auto">
               <li>Once you overwrite these files on GitHub, the workflow will trigger again automatically.</li>
