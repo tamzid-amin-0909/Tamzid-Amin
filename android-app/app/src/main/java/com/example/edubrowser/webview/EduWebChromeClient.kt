@@ -8,7 +8,7 @@ class EduWebChromeClient(
     private val onProgressChangedAction: (Int) -> Unit
 ) : WebChromeClient() {
 
-    override fun onProgressChanged(view: WebView?, newProgress: Int) {
+    override fun onProgressChanged(view: WebView, newProgress: Int) {
         super.onProgressChanged(view, newProgress)
         onProgressChangedAction(newProgress)
     }

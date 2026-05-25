@@ -73,22 +73,22 @@ class EduWebViewClient(
         customTabsIntent.launchUrl(context, uri)
     }
 
-    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+    override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
     }
 
-    override fun onPageFinished(view: WebView?, url: String?) {
+    override fun onPageFinished(view: WebView, url: String) {
         super.onPageFinished(view, url)
         onPageFinishedAction()
     }
 
     override fun onReceivedError(
-        view: WebView?,
-        request: WebResourceRequest?,
-        error: WebResourceError?
+        view: WebView,
+        request: WebResourceRequest,
+        error: WebResourceError
     ) {
         super.onReceivedError(view, request, error)
-        if (request?.isForMainFrame == true) {
+        if (request.isForMainFrame) {
             onErrorAction()
         }
     }

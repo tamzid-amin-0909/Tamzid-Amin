@@ -39,25 +39,18 @@ export default function App() {
           </div>
 
           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-6 text-center">
-            <h3 className="text-emerald-400 font-semibold mb-3">Wait, did it already build?</h3>
+            <h3 className="text-emerald-400 font-semibold mb-3">Fixing the Kotlin Compilation Error!</h3>
             <p className="text-neutral-300 text-sm max-w-sm mx-auto mb-4 text-left border border-indigo-500/50 bg-indigo-500/10 p-4 rounded-lg">
-              <strong className="text-indigo-400">Ignore the Node.js 20 warning!</strong>
+              <strong className="text-indigo-400">Ah, a strict Kotlin compiler error!</strong>
               <br/><br/>
-              That warning you pasted ("Node.js 20 actions are deprecated") is <strong>just a harmless background warning</strong> from GitHub Actions, it is NOT an actual error. It does not cause your build to fail.
+              The issue was hiding inside the custom Web Clients. Modern Android requires strict non-null definitions for things like the <code>WebView</code> and URLs, but I had originally included some optional nullability (<code>?</code>) which clashed with the SDK, causing it to fail right at the end.
               <br/><br/>
-              <strong>Your app likely built successfully!</strong>
+              I have removed the optional nullability to guarantee a strict match for Android API 34.
               <br/><br/>
-              Here is what to check right now:
-              <br/>
-              1. Go back to your GitHub Actions page.
-              <br/>
-              2. Scroll down all the way to the very bottom of the page, past all the text.
-              <br/>
-              3. Look for the <strong>Artifacts</strong> section.
-              <br/>
-              4. You should see <strong>EduBrowser-APK</strong> there! Click it to download your finished <code>.apk</code> file.
-              <br/><br/>
-              <em>(P.S. I also added a config to hide that annoying Node 20 warning for any future builds so it doesn't confuse you again).</em>
+              <strong>To build your APK:</strong><br/>
+              1. Download the ZIP file again using the settings menu.<br/>
+              2. Extract it and override the previous files in your GitHub repository.<br/>
+              3. The build should now sail through smoothly past the compiler.
             </p>
             
             <h3 className="text-emerald-400 font-semibold mb-3 mt-6">Did it actually fail with a red "X"?</h3>
