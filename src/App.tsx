@@ -39,13 +39,36 @@ export default function App() {
           </div>
 
           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-6 text-center">
-            <h3 className="text-emerald-400 font-semibold mb-3">How to compile your APK online:</h3>
+            <h3 className="text-emerald-400 font-semibold mb-3">Fixing the Build (GitHub Outage & Missing Dependency)</h3>
+            <p className="text-neutral-300 text-sm max-w-sm mx-auto mb-4 text-left border border-amber-500/50 bg-amber-500/10 p-4 rounded-lg">
+              <strong className="text-amber-400">What went wrong?</strong> GitHub's Actions matching/cache services are currently experiencing an outage, resulting in those 400 errors. Also, there was a tiny missing Android dependency (<code className="text-amber-300">lifecycle-runtime-ktx</code>).
+              <br/><br/>
+              I have fixed this in our source code. You have two options:
+              <br/><br/>
+              <strong>Option 1 (Easiest):</strong><br/>
+              Download the ZIP again from the Settings Menu, extract it, and upload the newly updated files to your GitHub repository, overwriting the old ones.
+              <br/><br/>
+              <strong>Option 2 (Manual Edit):</strong><br/>
+              <span className="text-neutral-400">1. Edit <code>android-app/app/build.gradle.kts</code> and add this inside dependencies:</span><br/>
+              <code className="text-emerald-300 text-xs">implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")</code>
+              <br/><br/>
+              <span className="text-neutral-400">2. Edit <code>.github/workflows/android-build.yml</code> to bypass caching, suppress Node 20 warnings, and print logs:</span><br/>
+              <code className="block bg-neutral-950 p-2 rounded text-[10px] sm:text-xs overflow-x-auto whitespace-pre font-mono text-emerald-300 border border-neutral-800 text-left select-all">
+{`    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+      with:
+        gradle-version: '8.7'
+        cache-disabled: true
+
+    - name: Build Debug APK
+      working-directory: ./android-app
+      run: gradle assembleDebug --stacktrace`}
+              </code>
+            </p>
             <ol className="text-neutral-300 text-sm space-y-3 text-left list-decimal list-inside max-w-sm mx-auto">
-              <li>Open the <strong>Settings Menu</strong> (gear icon usually at the top or left) and select <strong>Download as ZIP</strong>.</li>
-              <li>Go to GitHub (github.com) and create a brand new repository.</li>
-              <li>Extract your ZIP file and upload all the files to your new GitHub repository.</li>
-              <li>Go to your repository's <strong>Actions</strong> tab. A pre-configured workflow will automatically detect the Android app and build it.</li>
-              <li>Click the latest workflow run and download the <strong>EduBrowser-APK</strong> artifact!</li>
+              <li>Once you overwrite these files on GitHub, the workflow will trigger again automatically.</li>
+              <li>Because we added <code>--stacktrace</code>, if it fails, it will tell you the exact line number!</li>
+              <li>Wait for the green checkmark and download the APK!</li>
             </ol>
             
             <h3 className="text-emerald-400 font-semibold mb-3 mt-6">Or compile locally:</h3>

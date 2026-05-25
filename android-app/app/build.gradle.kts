@@ -47,4 +47,7 @@ dependencies {
     
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    
+    // Lifecycle components (required for lifecycleScope)
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 }
