@@ -27,14 +27,14 @@ export default function App() {
             </div>
             
             <h1 className="text-3xl font-medium tracking-tight text-neutral-100 mb-3">
-              Chromium Engine Unlocked
+              True Immersive Mode
             </h1>
             <p className="text-neutral-400 mb-8 leading-relaxed">
-              Your Kotlin app has been configured to use 100% of the underlying Chromium engine capabilities automatically, running beautifully without an address bar.
+              Your Kotlin Android app is now running in "Sticky Immersive" mode (just like games do). The status bar and navigation bar will auto-hide immediately, even when using the keyboard! I also removed the strict SSL pinning as you requested.
             </p>
 
             <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6">
-              <h3 className="text-emerald-400 font-medium mb-3">Build Ready:</h3>
+              <h3 className="text-emerald-400 font-medium mb-3">Changes applied:</h3>
               <ol className="text-emerald-200/70 text-sm space-y-3 list-decimal list-inside marker:text-emerald-500/50">
                 <li>Export the <strong className="text-emerald-300">ZIP file</strong> via the top right settings.</li>
                 <li>Extract and overwrite your GitHub repository.</li>
@@ -67,8 +67,8 @@ export default function App() {
 
           <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-center transition-colors hover:bg-neutral-800/80">
             <ShieldCheck className="w-7 h-7 text-teal-400 mb-4" />
-            <h3 className="font-medium text-neutral-200 mb-1">Secure Config</h3>
-            <p className="text-xs text-neutral-500 leading-relaxed">Locked down with strict Mixed Content rules, SafeBrowsing, and real SSL pinning.</p>
+            <h3 className="font-medium text-neutral-200 mb-1">Standard Security</h3>
+            <p className="text-xs text-neutral-500 leading-relaxed">SSL pinning has been removed for compatibility, while SafeBrowsing remains active.</p>
           </div>
         </div>
 

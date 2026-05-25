@@ -204,12 +204,17 @@ class MainActivity : AppCompatActivity() {
             val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             
             if (imeVisible) {
-                // Ensure system bars stay hidden even when keyboard is up
-                WindowInsetsControllerCompat(window, binding.root).hide(WindowInsetsCompat.Type.systemBars())
                 v.setPadding(0, 0, 0, imeHeight)
             } else {
                 v.setPadding(0, 0, 0, 0)
             }
+            
+            // Re-enforce sticky immersive mode whenever window insets change
+            WindowInsetsControllerCompat(window, binding.root).let { controller ->
+                controller.hide(WindowInsetsCompat.Type.systemBars())
+                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+            
             insets
         }
     }
