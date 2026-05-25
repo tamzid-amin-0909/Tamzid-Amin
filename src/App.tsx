@@ -39,32 +39,30 @@ export default function App() {
           </div>
 
           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-6 text-center">
-            <h3 className="text-emerald-400 font-semibold mb-3">Manifest & Icon Fixed!</h3>
+            <h3 className="text-emerald-400 font-semibold mb-3">Wait, did it already build?</h3>
             <p className="text-neutral-300 text-sm max-w-sm mx-auto mb-4 text-left border border-indigo-500/50 bg-indigo-500/10 p-4 rounded-lg">
-              <strong className="text-indigo-400">Found it!</strong> You were missing the default app icons (<code>ic_launcher</code>), and Gradle 8+ doesn't like the package name inside <code>AndroidManifest.xml</code>.
+              <strong className="text-indigo-400">Ignore the Node.js 20 warning!</strong>
               <br/><br/>
-              I have:
-              <br/>
-              1. Removed the old package declaration in the manifest.
-              <br/>
-              2. Created a default app icon in <code>res/drawable/ic_launcher.xml</code>.
-              <br/>
-              3. Updated the manifest to use this new valid icon so AAPT string linking finally works.
+              That warning you pasted ("Node.js 20 actions are deprecated") is <strong>just a harmless background warning</strong> from GitHub Actions, it is NOT an actual error. It does not cause your build to fail.
               <br/><br/>
-              <strong>To finally get your APK:</strong><br/>
-              1. Download the ZIP file again using the gear menu above.<br/>
-              2. Extract it and upload/overwrite all the files in your GitHub repository, just like before.<br/>
-              3. The build will start automatically, and this time there shouldn't be any resource errors!<br/>
+              <strong>Your app likely built successfully!</strong>
+              <br/><br/>
+              Here is what to check right now:
+              <br/>
+              1. Go back to your GitHub Actions page.
+              <br/>
+              2. Scroll down all the way to the very bottom of the page, past all the text.
+              <br/>
+              3. Look for the <strong>Artifacts</strong> section.
+              <br/>
+              4. You should see <strong>EduBrowser-APK</strong> there! Click it to download your finished <code>.apk</code> file.
+              <br/><br/>
+              <em>(P.S. I also added a config to hide that annoying Node 20 warning for any future builds so it doesn't confuse you again).</em>
             </p>
-            <ol className="text-neutral-300 text-sm space-y-3 text-left list-decimal list-inside max-w-sm mx-auto">
-              <li>Once you overwrite these files on GitHub, the workflow will trigger again automatically.</li>
-              <li>Because we added <code>--stacktrace</code>, if it fails, it will tell you the exact line number!</li>
-              <li>Wait for the green checkmark and download the APK!</li>
-            </ol>
             
-            <h3 className="text-emerald-400 font-semibold mb-3 mt-6">Or compile locally:</h3>
+            <h3 className="text-emerald-400 font-semibold mb-3 mt-6">Did it actually fail with a red "X"?</h3>
             <p className="text-neutral-300 text-sm max-w-sm mx-auto mb-2 text-left">
-              Download the project via the <strong>Settings menu</strong>. Then, open the <code className="bg-neutral-900 px-1 py-0.5 rounded text-emerald-300">android-app</code> folder in <strong>Android Studio</strong> to run it securely on your device.
+              If there is a red "X" next to "Build Debug APK", click on it to expand the terminal and scroll down until you see <strong>FAILED</strong> or <strong>* What went wrong</strong>. Copy that exact error message!
             </p>
           </div>
         </div>
