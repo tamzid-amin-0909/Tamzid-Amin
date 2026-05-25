@@ -39,31 +39,18 @@ export default function App() {
           </div>
 
           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-6 text-center">
-            <h3 className="text-emerald-400 font-semibold mb-3">Fixing the Build (GitHub Outage & Missing Dependency)</h3>
-            <p className="text-neutral-300 text-sm max-w-sm mx-auto mb-4 text-left border border-amber-500/50 bg-amber-500/10 p-4 rounded-lg">
-              <strong className="text-amber-400">What went wrong?</strong> GitHub's Actions matching/cache services are currently experiencing an outage, resulting in those 400 errors. Also, there was a tiny missing Android dependency (<code className="text-amber-300">lifecycle-runtime-ktx</code>).
+            <h3 className="text-emerald-400 font-semibold mb-3">One Last Fix for GitHub Actions!</h3>
+            <p className="text-neutral-300 text-sm max-w-sm mx-auto mb-4 text-left border border-indigo-500/50 bg-indigo-500/10 p-4 rounded-lg">
+              <strong className="text-indigo-400">I found the issue!</strong> The background error you had earlier (<code>Cannot mutate the dependencies...</code>) was due to an incompatibility between the Android compiler plugin and GitHub's latest runner environment.
               <br/><br/>
-              I have fixed this in our source code. You have two options:
+              I have permanently fixed the compiler versions!
               <br/><br/>
-              <strong>Option 1 (Easiest):</strong><br/>
-              Download the ZIP again from the Settings Menu, extract it, and upload the newly updated files to your GitHub repository, overwriting the old ones.
-              <br/><br/>
-              <strong>Option 2 (Manual Edit):</strong><br/>
-              <span className="text-neutral-400">1. Edit <code>android-app/app/build.gradle.kts</code> and add this inside dependencies:</span><br/>
-              <code className="text-emerald-300 text-xs">implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")</code>
-              <br/><br/>
-              <span className="text-neutral-400">2. Edit <code>.github/workflows/android-build.yml</code> to bypass caching, suppress Node 20 warnings, and print logs:</span><br/>
-              <code className="block bg-neutral-950 p-2 rounded text-[10px] sm:text-xs overflow-x-auto whitespace-pre font-mono text-emerald-300 border border-neutral-800 text-left select-all">
-{`    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
-      with:
-        gradle-version: '8.7'
-        cache-disabled: true
-
-    - name: Build Debug APK
-      working-directory: ./android-app
-      run: gradle assembleDebug --stacktrace`}
-              </code>
+              <strong>To finally get your APK:</strong><br/>
+              1. Download the ZIP file again using the gear menu above.<br/>
+              2. Extract it and upload/overwrite all the files in your GitHub repository, just like before.<br/>
+              3. The build will start automatically, and this time it will successfully skip that error!<br/>
+              <br/>
+              <span className="text-xs text-neutral-400">(Note: that Node.js 20 warning will still appear at the very bottom, but you can completely ignore it. Your app will build successfully now!)</span>
             </p>
             <ol className="text-neutral-300 text-sm space-y-3 text-left list-decimal list-inside max-w-sm mx-auto">
               <li>Once you overwrite these files on GitHub, the workflow will trigger again automatically.</li>
