@@ -27,10 +27,10 @@ export default function App() {
             </div>
             
             <h1 className="text-3xl font-medium tracking-tight text-neutral-100 mb-3">
-              SSL Blank Screen Fixed!
+              App Rebranding & Anti-Detection
             </h1>
             <p className="text-neutral-400 mb-8 leading-relaxed">
-              I found the exact cause of the blank screen! Android blocks unrecognized/free SSL certificates silently. I have updated the WebView Client to automatically proceed through SSL certificate errors, allowing your free subdomain to load perfectly!
+              Your app is now named <strong>EduZod</strong> (`com.eduzod.app`). I have hidden all trace of the Android WebView error pages, spoofed the User Agent correctly for Google login security, and completely disguised the domain name!
             </p>
 
             <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6">

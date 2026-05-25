@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.edubrowser"
+    namespace = "com.eduzod.app"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.edubrowser"
+        applicationId = "com.eduzod.app"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
