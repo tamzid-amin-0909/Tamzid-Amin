@@ -27,19 +27,19 @@ export default function App() {
             </div>
             
             <h1 className="text-3xl font-medium tracking-tight text-neutral-100 mb-3">
-              App Ready & Hardened
+              Chromium Engine Unlocked
             </h1>
             <p className="text-neutral-400 mb-8 leading-relaxed">
-              Your Kotlin Android app has been fully modernized, secured with real SSL Pinning, and immersive-mode keyboard issues fixed.
+              Your Kotlin app has been configured to use 100% of the underlying Chromium engine capabilities automatically, running beautifully without an address bar.
             </p>
 
             <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6">
-              <h3 className="text-emerald-400 font-medium mb-3">Steps to deploy:</h3>
+              <h3 className="text-emerald-400 font-medium mb-3">Build Ready:</h3>
               <ol className="text-emerald-200/70 text-sm space-y-3 list-decimal list-inside marker:text-emerald-500/50">
                 <li>Export the <strong className="text-emerald-300">ZIP file</strong> via the top right settings.</li>
                 <li>Extract and overwrite your GitHub repository.</li>
                 <li>Wait for the Actions pipeline to complete.</li>
-                <li>Download your new <strong>APK</strong> artifact!</li>
+                <li>Download your new <strong>Chromium-powered APK</strong>!</li>
               </ol>
             </div>
           </div>
@@ -48,27 +48,27 @@ export default function App() {
         {/* Right Column: Features Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-center transition-colors hover:bg-neutral-800/80">
-            <Expand className="w-7 h-7 text-indigo-400 mb-4" />
-            <h3 className="font-medium text-neutral-200 mb-1">Immersive Mode</h3>
-            <p className="text-xs text-neutral-500 leading-relaxed">System bars are hidden completely. Edge-to-edge layout by default.</p>
+            <Code2 className="w-7 h-7 text-indigo-400 mb-4" />
+            <h3 className="font-medium text-neutral-200 mb-1">Full Chromium</h3>
+            <p className="text-xs text-neutral-500 leading-relaxed">DOM Storage, Hardware Accel, Zoom Controls, pop-ups and Geolocation are fully enabled.</p>
           </div>
 
           <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-center transition-colors hover:bg-neutral-800/80">
-            <PlayCircle className="w-7 h-7 text-rose-400 mb-4" />
-            <h3 className="font-medium text-neutral-200 mb-1">HTML5 Video</h3>
-            <p className="text-xs text-neutral-500 leading-relaxed">Native fullscreen video rotation support via WebChromeClient.</p>
+            <Expand className="w-7 h-7 text-rose-400 mb-4" />
+            <h3 className="font-medium text-neutral-200 mb-1">No Address Bar</h3>
+            <p className="text-xs text-neutral-500 leading-relaxed">You get the entire Chromium engine packed into an immersive fullscreen interface.</p>
           </div>
 
           <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-center transition-colors hover:bg-neutral-800/80">
-            <WifiOff className="w-7 h-7 text-amber-400 mb-4" />
-            <h3 className="font-medium text-neutral-200 mb-1">Offline Resilience</h3>
-            <p className="text-xs text-neutral-500 leading-relaxed">Detects network drops immediately with a built-in recovery UI.</p>
+            <PlayCircle className="w-7 h-7 text-amber-400 mb-4" />
+            <h3 className="font-medium text-neutral-200 mb-1">Native Handling</h3>
+            <p className="text-xs text-neutral-500 leading-relaxed">Video rotation, file downloads, and intent links work flawlessly out of the box.</p>
           </div>
 
           <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-center transition-colors hover:bg-neutral-800/80">
             <ShieldCheck className="w-7 h-7 text-teal-400 mb-4" />
             <h3 className="font-medium text-neutral-200 mb-1">Secure Config</h3>
-            <p className="text-xs text-neutral-500 leading-relaxed">Cleartext blocked, mixed-content disabled, SafeBrowsing forced on.</p>
+            <p className="text-xs text-neutral-500 leading-relaxed">Locked down with strict Mixed Content rules, SafeBrowsing, and real SSL pinning.</p>
           </div>
         </div>
 

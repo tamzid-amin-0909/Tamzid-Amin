@@ -50,15 +50,25 @@ class MainActivity : AppCompatActivity() {
     private fun setupWebView(savedInstanceState: Bundle?) {
         val webSettings = binding.webView.settings
         
-        // General Browser Settings
+        // Chrome Engine Settings
         webSettings.javaScriptEnabled = true
         webSettings.domStorageEnabled = true
         webSettings.databaseEnabled = true
         webSettings.mediaPlaybackRequiresUserGesture = false
         webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
-        webSettings.allowFileAccess = false // disable insecure file URL access
-        webSettings.allowContentAccess = false 
-        webSettings.safeBrowsingEnabled = true // Safe Browsing enabled
+        webSettings.allowFileAccess = false
+        webSettings.allowContentAccess = false
+        webSettings.safeBrowsingEnabled = true
+        
+        // Full Desktop/Browser behaviors
+        webSettings.useWideViewPort = true
+        webSettings.loadWithOverviewMode = true
+        webSettings.setSupportZoom(true)
+        webSettings.builtInZoomControls = true
+        webSettings.displayZoomControls = false
+        webSettings.javaScriptCanOpenWindowsAutomatically = true
+        webSettings.setGeolocationEnabled(true)
+        webSettings.setSupportMultipleWindows(true)
         
         // Realistic Browser User Agent (append identifier)
         val originalUserAgent = webSettings.userAgentString
@@ -113,6 +123,16 @@ class MainActivity : AppCompatActivity() {
                 customViewCallback = null
             }
         )
+
+        binding.webView.setDownloadListener { downloadUrl, _, _, _, _ ->
+            try {
+                val intent = android.content.Intent(android.content.Intent.ACTION_VIEW)
+                intent.data = android.net.Uri.parse(downloadUrl)
+                startActivity(intent)
+            } catch (e: Exception) {
+                // Ignore if browser not found
+            }
+        }
 
         // Load Main Website
         if (savedInstanceState == null) {
