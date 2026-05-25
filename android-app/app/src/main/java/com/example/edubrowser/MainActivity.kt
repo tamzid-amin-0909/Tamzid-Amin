@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
         networkMonitor = NetworkMonitor(this)
         
-        setupWebView()
+        setupWebView(savedInstanceState)
         setupOfflineUi()
         observeNetwork()
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private fun setupWebView() {
+    private fun setupWebView(savedInstanceState: Bundle?) {
         val webSettings = binding.webView.settings
         
         // General Browser Settings
