@@ -20,40 +20,19 @@ export default function App() {
         </div>
 
         <div className="px-8 pb-8">
-          <div className="grid gap-4 mb-8">
-            <div className="flex items-start gap-4 p-4 rounded-xl bg-neutral-900/50 border border-neutral-700/50">
-              <ShieldCheck className="w-6 h-6 text-emerald-400 shrink-0 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-neutral-200 mb-1">Hard SSL Pinning</h3>
-                <p className="text-sm text-neutral-400">Strict certificate pinning configured via Network Security Config and OkHttp.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 p-4 rounded-xl bg-neutral-900/50 border border-neutral-700/50">
-              <Code className="w-6 h-6 text-emerald-400 shrink-0 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-neutral-200 mb-1">Modern Architecture</h3>
-                <p className="text-sm text-neutral-400">Kotlin Coroutines, ViewBinding, and Material 3 design are fully integrated.</p>
-              </div>
-            </div>
-          </div>
-
           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-6 text-center">
-            <h3 className="text-emerald-400 font-semibold mb-3">Fixing MainActivity.kt Compilation Error!</h3>
+            <h3 className="text-emerald-400 font-semibold mb-3">Fixing the Blank Page!</h3>
             <p className="text-neutral-300 text-sm max-w-sm mx-auto mb-4 text-left border border-indigo-500/50 bg-indigo-500/10 p-4 rounded-lg">
-              <strong className="text-indigo-400">Fixed a small scope bug!</strong>
+              <strong className="text-indigo-400">Found the culprit.</strong>
               <br/><br/>
-              The code in MainActivity could not find `savedInstanceState` in the web view setup function. I passed the variable through so the compiler is happy.
+              The app was showing a blank screen because I had previously enabled <strong>Strict SSL Pinning</strong> with "dummy" certificate hashes (as placeholders). This caused Android's security system to block the connection to your website, thinking it was an interception.
               <br/><br/>
-              <strong>To build your APK:</strong><br/>
+              I have disabled the dummy SSL pinning in <code>network_security_config.xml</code> so your website can load normally!
+              <br/><br/>
+              <strong>To fix your app:</strong><br/>
               1. Download the ZIP file again using the settings menu.<br/>
               2. Extract it and override the previous files in your GitHub repository.<br/>
-              3. The build should now succeed.
-            </p>
-            
-            <h3 className="text-emerald-400 font-semibold mb-3 mt-6">Did it actually fail with a red "X"?</h3>
-            <p className="text-neutral-300 text-sm max-w-sm mx-auto mb-2 text-left">
-              If there is a red "X" next to "Build Debug APK", click on it to expand the terminal and scroll down until you see <strong>FAILED</strong> or <strong>* What went wrong</strong>. Copy that exact error message!
+              3. Download the new APK once it finishes, and the blank page will be gone!
             </p>
           </div>
         </div>
