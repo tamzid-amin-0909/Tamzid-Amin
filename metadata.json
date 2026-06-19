@@ -1,6 +1,6 @@
 {
-  "name": "EduBrowser - Android App",
-  "description": "Native Android educational browser with Hard SSL Pinning and Custom Tabs.",
+  "name": "EduZod",
+  "description": "Interactive student course player and content management platform.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

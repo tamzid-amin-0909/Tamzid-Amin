@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database JSON Auto Merger</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background:#f4f7fb; font-family:'Segoe UI',sans-serif; padding:40px 0; }
+        .card { border:none; border-radius:18px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
+        .title { font-weight:700; color:#0d6efd; }
+        .upload-box { background:white; border-radius:14px; padding:20px; border:2px dashed #d0d7e2; }
+        .status-box { background:#fff; border-radius:14px; padding:15px; margin-top:20px; min-height:70px; max-height:320px; overflow-y:auto; }
+        .log-item { padding:8px 10px; border-bottom:1px solid #eee; font-size:13px; display:flex; align-items:center; gap:8px; }
+        .btn-custom { border-radius:999px; padding:10px 20px; font-weight:600; }
+        .success { color:#198754; } .error { color:#dc3545; } .warn { color:#fd7e14; } .info { color:#0d6efd; }
+        .badge-ok   { background:#d1e7dd; color:#198754; }
+        .badge-err  { background:#f8d7da; color:#dc3545; }
+        .badge-warn { background:#fff3cd; color:#856404; }
+        .badge-info { background:#cfe2ff; color:#084298; }
+        .spinner-border { width:1rem; height:1rem; border-width:2px; }
+        #progressBar { transition: width 0.3s ease; }
+        .divider { border-top:2px dashed #dee2e6; margin:24px 0; }
+        .btn-rm { background:linear-gradient(135deg,#6f42c1,#0d6efd); border:none; color:#fff; }
+        .btn-rm:hover { background:linear-gradient(135deg,#5a32a3,#0a58ca); color:#fff; }
+        .btn-rm:disabled { opacity:0.65; }
+    </style>
+</head>
+<body>
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-lg-8">
+<div class="card p-4">
+
+    <h2 class="text-center title mb-1">Database JSON Auto Merger</h2>
+    <p class="text-center text-muted mb-4" style="font-size:13px;">
+        Integration Mode: <span class="badge badge-info" id="firebase-badge">Firebase Firestore Live Support</span>
+    </p>
+
+    <!-- Auto RM Section -->
+    <div class="upload-box mb-4" style="border-color:#6f42c1; background:#f8f5ff;">
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="fs-5">🚀</span>
+            <span class="fw-bold" style="color:#6f42c1;">Auto Update from Redwan's Method</span>
+        </div>
+        <p class="text-muted mb-3" style="font-size:13px;">
+            Fetches all 9 courses from RM API ➔ merges into your live server database ➔ saves directly to Firebase Firestore!
+        </p>
+
+        <div class="progress mb-3" style="height:8px; display:none;" id="progressWrap">
+            <div class="progress-bar progress-bar-striped progress-bar-animated btn-rm"
+                 id="progressBar" role="progressbar" style="width:0%"></div>
+        </div>
+
+        <div class="d-grid gap-2">
+            <button class="btn btn-rm btn-custom" id="updateRmBtn">
+                ⚠ Update Redwan's Method to Database
+            </button>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- DB SOURCE SELECTION -->
+    <div class="upload-box mb-4">
+        <label class="form-label fw-bold">1. Select Main Database Source</label>
+        
+        <div class="btn-group w-100 mb-3" id="sourceToggle" role="group">
+            <button type="button" class="btn btn-sm btn-outline-primary active" id="btnServer" onclick="setSource('server')">🔥 Live Firebase Firestore</button>
+            <button type="button" class="btn btn-sm btn-outline-primary" id="btnFile" onclick="setSource('file')">📁 Upload database.json File</button>
+            <button type="button" class="btn btn-sm btn-outline-primary" id="btnUrl" onclick="setSource('url')">🌐 Fetch from URL</button>
+        </div>
+
+        <!-- Local File -->
+        <div id="fileInputWrap" style="display:none;">
+            <input type="file" id="mainJson" class="form-control" accept=".json">
+            <div class="form-text mt-2">Upload your local database.json file.</div>
+        </div>
+
+        <!-- Custom URL -->
+        <div id="urlInputWrap" style="display:none;">
+            <div class="input-group">
+                <input type="text" id="dbUrl" class="form-control" placeholder="https://example.com/database.json">
+                <button class="btn btn-primary" type="button" onclick="manualUrlFetch()">Fetch Now</button>
+            </div>
+            <div class="form-text mt-2">Enter custom URL ending in database.json</div>
+        </div>
+
+        <!-- Live Server (Firebase) -->
+        <div id="serverInputWrap">
+            <div class="alert alert-dark mb-0 py-2 fs-7" style="font-size: 13px;">
+                🤝 Automatically reading live server data (settings, notices, content) directly from **Firebase Firestore** using your active session.
+            </div>
+        </div>
+    </div>
+
+    <!-- Subject input files -->
+    <div class="upload-box mb-4">
+        <label class="form-label fw-bold">2. Upload Subject JSON Files</label>
+        <input type="file" id="subjectFiles" class="form-control" accept=".json" multiple>
+        <div class="form-text mt-2">
+            Example file names: physics001.json &nbsp;|&nbsp; chemistry_class.json &nbsp;|&nbsp; bgs09.json
+        </div>
+    </div>
+
+    <div class="d-grid gap-2">
+        <button class="btn btn-primary btn-custom mb-2" id="processBtn">Merge & Download database.json</button>
+        <button class="btn btn-success btn-custom" id="saveDirectBtn">🚀 Merge & Save Directly to Live Firebase</button>
+    </div>
+
+    <!-- Logs box -->
+    <div class="status-box mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-bold">Processing Log</span>
+            <button class="btn btn-sm btn-outline-secondary" onclick="clearLogs()" style="border-radius:999px;font-size:11px;">Clear</button>
+        </div>
+        <div id="logs"></div>
+    </div>
+
+</div>
+</div>
+</div>
+</div>
+
+<script>
+// CONFIG & CONSTANTS
+const SUBJECT_KEYS = [
+    'physics','chemistry','biology','ict',
+    'general_math','higher_math','english','bgs','bangla'
+];
+
+// STATE MANAGEMENT
+let mainDatabase = null;
+let currentSource = 'server'; // 'server' | 'file' | 'url'
+let fetchedDatabaseUrlObject = null;
+
+// ELEMENT REFERENCES
+const mainJsonInput   = document.getElementById('mainJson');
+const subjectFilesInput = document.getElementById('subjectFiles');
+const processBtn      = document.getElementById('processBtn');
+const saveDirectBtn   = document.getElementById('saveDirectBtn');
+const updateRmBtn     = document.getElementById('updateRmBtn');
+const logsEl          = document.getElementById('logs');
+const progressWrap    = document.getElementById('progressWrap');
+const progressBar     = document.getElementById('progressBar');
+
+// Set Initial State UI
+function setSource(mode) {
+    currentSource = mode;
+    document.getElementById('fileInputWrap').style.display = (mode === 'file') ? 'block' : 'none';
+    document.getElementById('urlInputWrap').style.display = (mode === 'url') ? 'block' : 'none';
+    document.getElementById('serverInputWrap').style.display = (mode === 'server') ? 'block' : 'none';
+    
+    document.getElementById('btnFile').classList.toggle('active', mode === 'file');
+    document.getElementById('btnUrl').classList.toggle('active', mode === 'url');
+    document.getElementById('btnServer').classList.toggle('active', mode === 'server');
+}
+
+// LOGGING HELPERS
+function addLog(message, type = 'ok') {
+    const badges = { ok: 'badge-ok', error: 'badge-err', warn: 'badge-warn', info: 'badge-info' };
+    const icons  = { ok: '✓', error: '✗', warn: '⚠', info: 'ℹ' };
+    const div = document.createElement('div');
+    div.className = 'log-item';
+    div.innerHTML = `<span class="badge ${badges[type] || 'badge-info'}">${icons[type] || 'i'}</span> ${message}`;
+    logsEl.appendChild(div);
+    logsEl.parentElement.scrollTop = logsEl.parentElement.scrollHeight;
+}
+
+function clearLogs() { logsEl.innerHTML = ''; }
+
+function setProgress(pct) {
+    progressWrap.style.display = 'block';
+    progressBar.style.width = pct + '%';
+    if (pct >= 100) setTimeout(() => { progressWrap.style.display = 'none'; progressBar.style.width = '0%'; }, 1500);
+}
+
+// CRYPTO AES DECRYPTION HELPERS (FOR AUTHENTICATED API PAYLOADS)
+function getAuthToken() {
+    return localStorage.getItem('authToken') || '';
+}
+
+async function _getApiCryptoKey(token) {
+    const raw = await crypto.subtle.digest(
+        'SHA-256',
+        new TextEncoder().encode(token + '-enc-v1')
+    );
+    return await crypto.subtle.importKey('raw', raw, { name: 'AES-CBC' }, false, ['decrypt']);
+}
+
+async function decryptAPIPayload(payload, token) {
+    if (!payload || !payload.e || !payload.i) return payload; // Already decrypted/plaintext
+    try {
+        const key = await _getApiCryptoKey(token);
+        const iv  = Uint8Array.from(atob(payload.i), c => c.charCodeAt(0));
+        const enc = Uint8Array.from(atob(payload.e), c => c.charCodeAt(0));
+        const dec = await crypto.subtle.decrypt({ name: 'AES-CBC', iv }, key, enc);
+        return JSON.parse(new TextDecoder().decode(dec));
+    } catch(err) {
+        console.error('Core payload decryption failure:', err);
+        return payload;
+    }
+}
+
+// Manual URL fetch
+async function manualUrlFetch() {
+    const url = document.getElementById('dbUrl').value.trim();
+    if (!url) { addLog('Please specify a URL first.', 'warn'); return; }
+    addLog(`Fetching DB from URL: ${url}`, 'info');
+    try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Status ${res.status}`);
+        fetchedDatabaseUrlObject = await res.json();
+        addLog('Successfully loaded database from custom URL!', 'ok');
+    } catch(err) {
+        addLog(`Fetch failure: ${err.message}`, 'error');
+    }
+}
+
+// Retrieve DB from selected source
+async function resolveMainDatabase() {
+    if (currentSource === 'file') {
+        if (mainJsonInput.files.length === 0) {
+            throw new Error('Please select a local database.json file to upload.');
+        }
+        const mainText = await mainJsonInput.files[0].text();
+        return JSON.parse(mainText);
+    } 
+    
+    if (currentSource === 'url') {
+        if (!fetchedDatabaseUrlObject) {
+            throw new Error('Please enter a custom URL and fetch the database first.');
+        }
+        return JSON.parse(JSON.stringify(fetchedDatabaseUrlObject));
+    }
+
+    if (currentSource === 'server') {
+        addLog('Fetching live database from server (Firebase)...', 'info');
+        const token = getAuthToken();
+        if (!token) {
+            throw new Error('You need an active authenticated session. Please login to the Portal first!');
+        }
+        const res = await fetch(`api.php?action=read&token=${token}`);
+        if (!res.ok) {
+            throw new Error(`Server returned HTTP ${res.status}. Session may have expired.`);
+        }
+        const rawPayload = await res.json();
+        const decrypted = await decryptAPIPayload(rawPayload, token);
+        if (!decrypted || !decrypted.content) {
+            throw new Error('Failed to deserialize server payload. Check administrator role permissions.');
+        }
+        addLog('Live server database successfully pulled from Firebase Firestore!', 'ok');
+        return decrypted;
+    }
+}
+
+// RETAIN COMPATIBILITY WITH RM UPDATE
+updateRmBtn.addEventListener('click', async () => {
+    clearLogs();
+    updateRmBtn.disabled = true;
+    updateRmBtn.innerHTML = '<span class="spinner-border me-2"></span>Working...';
+    setProgress(10);
+
+    try {
+        const token = getAuthToken();
+        if (!token) throw new Error('You must be logged in as Administrator to post RM API merges.');
+
+        addLog('Sending automated RM API update/merge sequence to server...', 'info');
+        const resp = await fetch(`api.php?action=update_rm&token=${token}`, { method: 'GET' });
+
+        setProgress(70);
+
+        if (!resp.ok) {
+            const errText = await resp.text();
+            try {
+                const errJson = JSON.parse(errText);
+                addLog('Server error: ' + (errJson.error || errText), 'error');
+            } catch {
+                addLog('Server error: ' + errText, 'error');
+            }
+            return;
+        }
+
+        const contentType = resp.headers.get('content-type') || '';
+        if (contentType.includes('application/zip')) {
+            const blob = await resp.blob();
+            setProgress(90);
+            triggerDownload(blob, 'rm_database_update.zip');
+            addLog('Server merged & saved database.json successfully! ✓', 'ok');
+            addLog('ZIP downloaded: rm_database_update.zip (old database, new database + update_log)', 'ok');
+            setProgress(100);
+        } else {
+            const text = await resp.text();
+            try {
+                const data = JSON.parse(text);
+                if (data.error) { addLog('Error: ' + data.error, 'error'); return; }
+                addLog(JSON.stringify(data), 'info');
+            } catch {
+                addLog('Unexpected response: ' + text.substring(0, 200), 'warn');
+            }
+        }
+    } catch (err) {
+        addLog('Network error: ' + err.message, 'error');
+    } finally {
+        updateRmBtn.disabled = false;
+        updateRmBtn.innerHTML = '⚠ Update Redwan\'s Method to Database';
+    }
+});
+
+// CORE MERGER LOGIC
+async function executeMerge() {
+    clearLogs();
+    const dbData = await resolveMainDatabase();
+    
+    const files = Array.from(subjectFilesInput.files);
+    if (files.length === 0) {
+        throw new Error('Please upload at least one Subject JSON file to merge.');
+    }
+
+    if (!dbData.content) dbData.content = {};
+
+    for (const file of files) {
+        try {
+            const detectedSub = detectSubject(file.name);
+            if (!detectedSub) {
+                addLog(`Skipped ${file.name} ➔ No matching subject key found.`, 'error');
+                continue;
+            }
+
+            const json = JSON.parse(await file.text());
+            const formatted = formatData(json);
+
+            if (!dbData.content[detectedSub]) {
+                dbData.content[detectedSub] = {
+                    title: detectedSub.toUpperCase(),
+                    type: 'category',
+                    description: detectedSub.toUpperCase(),
+                    children: {}
+                };
+            }
+
+            if (!dbData.content[detectedSub].children) {
+                dbData.content[detectedSub].children = {};
+            }
+
+            Object.assign(dbData.content[detectedSub].children, formatted);
+            addLog(`Merged ${file.name} ➔ content/${detectedSub}/children`, 'ok');
+        } catch(err) {
+            addLog(`Error processing ${file.name}: ${err.message}`, 'error');
+        }
+    }
+    return dbData;
+}
+
+// Download Button Trigger
+processBtn.addEventListener('click', async () => {
+    try {
+        const mergedDb = await executeMerge();
+        triggerDownload(
+            new Blob([JSON.stringify(mergedDb)], { type: 'application/json' }),
+            'database.json'
+        );
+        addLog('Finished merging! database.json file downloaded.', 'ok');
+    } catch(err) {
+        addLog(`Merge aborted: ${err.message}`, 'error');
+    }
+});
+
+// Direct Firebase Save Button Trigger
+saveDirectBtn.addEventListener('click', async () => {
+    try {
+        const mergedDb = await executeMerge();
+        const token = getAuthToken();
+        if (!token) throw new Error('Authorization token missing. Authenticate in the main site.');
+
+        addLog('Pushing merged schema up to live Firebase Firestore...', 'info');
+        const res = await fetch(`api.php?action=write&token=${token}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(mergedDb)
+        });
+
+        if (!res.ok) {
+            const errJson = await res.json().catch(() => ({}));
+            throw new Error(errJson?.error || `HTTP error ${res.status}`);
+        }
+
+        addLog('✨ SUCCESS! Changes merged and committed directly to Firebase Firestore database!', 'ok');
+    } catch(err) {
+        addLog(`Direct Save failed: ${err.message}`, 'error');
+    }
+});
+
+// HELPERS
+function detectSubject(fileName) {
+    const lower = fileName.toLowerCase();
+    return SUBJECT_KEYS.find(s => lower.includes(s));
+}
+
+function triggerDownload(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+function formatData(data) {
+    let root = {};
+    data.forEach(item => {
+        let subKey = item.subject.toLowerCase().replace(/\s+/g,'_').replace(/[()]/g,'');
+        root[subKey] = {
+            title:       item.subject,
+            thumbnail:   item.subjectThumbnail || item.thumbnail || '',
+            type:        'category',
+            description: item.subject || '',
+            children:    {}
+        };
+        if (item.chapters) {
+            item.chapters.forEach((chap, cIdx) => {
+                let chapKey = 'id_' + (cIdx + 1);
+                root[subKey].children[chapKey] = {
+                    title:     chap.chapterName,
+                    thumbnail: chap.chapterThumbnail || chap.thumbnail || '',
+                    type:      'category',
+                    children:  {}
+                };
+                if (chap.lectures) {
+                    chap.lectures.forEach(lec => {
+                        let lecKey  = 'lec_' + (lec.videoNumber || '0');
+                        let descArr = [];
+                        if (lec.videoLectureSheetURL) descArr.push('Lecture Sheet--> ' + lec.videoLectureSheetURL);
+                        if (lec.videoLectureNoteURL || lec.videoNoteURL)
+                              descArr.push('Note--> ' + (lec.videoLectureNoteURL || lec.videoNoteURL));
+                        if (lec.videoPracticeSheetURL) descArr.push('Practice Sheet--> ' + lec.videoPracticeSheetURL);
+                        if (lec.videoSolveSheetURL)    descArr.push('Solve Sheet--> ' + lec.videoSolveSheetURL);
+                        root[subKey].children[chapKey].children[lecKey] = {
+                            title:       lec.videoTitle,
+                            type:        'video',
+                            description: descArr.join('\n'),
+                            url:         lec.videoURL || lec.videoYoutubeURL || ''
+                        };
+                    });
+                }
+            });
+        }
+    });
+    return root;
+}
+</script>
+</body>
+</html>

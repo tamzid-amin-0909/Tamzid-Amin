@@ -1,0 +1,78 @@
+{
+  "entities": {
+    "Settings": {
+      "title": "Settings",
+      "description": "App settings and customization options",
+      "type": "object",
+      "properties": {
+        "primary": { "type": "string" },
+        "bg": { "type": "string" },
+        "panel": { "type": "string" },
+        "shareText": { "type": "string" },
+        "telegramBotToken": { "type": "string" },
+        "telegramBotName": { "type": "string" },
+        "heroSubtitleLoggedIn": { "type": "string" },
+        "heroSubtitleLoggedOut": { "type": "string" }
+      }
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile and credentials",
+      "type": "object",
+      "properties": {
+        "password": { "type": "string" },
+        "role": { "type": "string" },
+        "access": { "type": "array" },
+        "telegramId": { "type": "string" },
+        "telegramName": { "type": "string" },
+        "isTelegramUser": { "type": "boolean" },
+        "trialEnd": { "type": "number" },
+        "currentSession": { "type": "string" }
+      }
+    },
+    "Session": {
+      "title": "Session",
+      "description": "User session token mapping",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "createdAt": { "type": "number" },
+        "lastActive": { "type": "number" }
+      }
+    },
+    "ContentNode": {
+      "title": "ContentNode",
+      "description": "A top-level educational subject content tree",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "thumbnail": { "type": "string" },
+        "type": { "type": "string" },
+        "description": { "type": "string" },
+        "isFree": { "type": "boolean" }
+      }
+    }
+  },
+  "firestore": {
+    "config/settings": {
+      "schema": "Settings",
+      "description": "Global application configuration settings"
+    },
+    "config/notices": {
+      "schema": "object",
+      "description": "Global notice lists"
+    },
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Registered students and administrators"
+    },
+    "sessions/{tokenId}": {
+      "schema": "Session",
+      "description": "User login session mapping"
+    },
+    "content/{subjectId}": {
+      "schema": "ContentNode",
+      "description": "Educational subject category content tree data"
+    }
+  }
+}

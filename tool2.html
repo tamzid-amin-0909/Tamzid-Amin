@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSC/SSC Database Merger</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f0f4ff; font-family: 'Segoe UI', sans-serif; padding: 40px 0 60px; }
+        .card { border: none; border-radius: 20px; box-shadow: 0 6px 28px rgba(0,0,0,0.09); }
+        .title { font-weight: 800; background: linear-gradient(135deg, #0d6efd, #6f42c1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .badge-section { background: linear-gradient(135deg, rgba(13,110,253,0.15), rgba(111,66,193,0.15)); border: 1.5px solid rgba(13,110,253,0.3); border-radius: 12px; padding: 6px 14px; font-size: 12px; color: #0d6efd; font-weight: 600; display: inline-block; margin-bottom: 8px; }
+        .upload-box { background: white; border-radius: 16px; padding: 22px; border: 2px dashed #c8d6f5; transition: border-color 0.2s; }
+        .upload-box:hover { border-color: #0d6efd; }
+        .upload-box .form-control { border-radius: 10px; border: 1.5px solid #dee2e6; }
+        .status-box { background: #fff; border-radius: 16px; padding: 18px; margin-top: 20px; min-height: 80px; border: 1.5px solid #e8edf5; }
+        .log-item { padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 13.5px; font-family: 'Consolas', monospace; }
+        .log-success { background: #d1fae5; color: #065f46; }
+        .log-error   { background: #fee2e2; color: #991b1b; }
+        .log-info    { background: #dbeafe; color: #1e40af; }
+        .log-warn    { background: #fef3c7; color: #92400e; }
+        .btn-custom { border-radius: 999px; padding: 12px 28px; font-weight: 700; font-size: 15px; background: linear-gradient(135deg, #0d6efd, #6f42c1); border: none; color: white; transition: opacity 0.2s, transform 0.1s; }
+        .btn-custom:hover { opacity: 0.9; transform: translateY(-1px); color: white; }
+        .btn-custom:active { transform: translateY(0); }
+        .preview-box { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px; margin-top: 18px; display: none; }
+        .preview-box.visible { display: block; }
+        .tree-course  { font-weight: 700; color: #1e40af; font-size: 13px; margin-top: 10px; }
+        .tree-subject { font-weight: 600; color: #6f42c1; font-size: 12.5px; margin-left: 18px; margin-top: 4px; }
+        .tree-chapter { font-size: 12px; color: #374151; margin-left: 36px; }
+        .tree-subject::before { content: "📚 "; }
+        .tree-chapter::before { content: "📖 "; }
+        .counter-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+        .counter-card { flex: 1; min-width: 90px; background: white; border-radius: 12px; padding: 14px 10px; text-align: center; border: 1.5px solid #e2e8f0; }
+        .counter-card .num { font-size: 26px; font-weight: 800; color: #0d6efd; }
+        .counter-card .lbl { font-size: 11px; color: #6b7280; font-weight: 600; text-transform: uppercase; }
+        .step-num { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #0d6efd, #6f42c1); color: white; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; flex-shrink: 0; }
+        .step-header { display: flex; align-items: center; margin-bottom: 12px; }
+        .step-header span { font-weight: 700; font-size: 15px; color: #01293b; }
+        hr.divider { border-color: #e2e8f0; margin: 24px 0; }
+        .path-display { font-family: monospace; font-size: 11.5px; background: #1e293b; color: #7dd3fc; border-radius: 8px; padding: 10px 14px; }
+        .path-display .dim { color: #64748b; }
+        .path-display .highlight { color: #f0abfc; }
+        .path-display .green { color: #86efac; }
+        #sourceToggle .btn { border-radius: 8px !important; font-size: 13px; font-weight: 600; }
+        #sourceToggle .btn.active { background: linear-gradient(135deg,#0d6efd,#6f42c1); color: white; border-color: transparent; }
+        .phase-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+        .phase-banner { border-radius: 10px; padding: 9px 14px; font-size: 13px; font-weight: 600; }
+        .ph1 { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .ph2 { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .ph3 { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card p-4 p-md-5">
+
+                <div class="text-center mb-4">
+                    <div class="badge-section">AIMERS'27 • Academic to Admission</div>
+                    <h2 class="title mb-1">Database Merger Studio</h2>
+                    <p class="text-muted" style="font-size:14px;">
+                        Merges <strong>extracted_classes.json</strong> into <strong>database.json</strong> — thumbnails always safe
+                    </p>
+                </div>
+
+                <div class="phase-row">
+                    <div class="phase-banner ph1">🔒 Phase 1 ➔ EXTRACT: Saves every existing thumbnail from database.json keyed by node title</div>
+                    <div class="phase-banner ph2">🔄 Phase 2 ➔ MERGE: Builds 4-level tree (Course ➔ Subject ➔ Chapter ➔ Video) with 3-digit slug keys</div>
+                    <div class="phase-banner ph3">🎨 Phase 3 ➔ RESTORE: Re-applies all saved thumbnails back onto matching nodes by title</div>
+                </div>
+
+                <div class="path-display mb-4">
+                    <span class="dim">content/</span><span class="highlight">target_key</span><span class="dim">/children/</span><br>
+                    &nbsp;&nbsp;<span class="green">001</span><span class="dim"> ➔ Course /children/</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="green">001</span><span class="dim"> ➔ Subject /children/</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="green">001</span><span class="dim"> ➔ Chapter /children/</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="green">001</span><span class="dim"> ➔ { type:"video", url, description:"Lecture Sheet--> link" }</span>
+                </div>
+
+                <hr class="divider">
+
+                <div class="upload-box mb-4">
+                    <div class="step-header"><div class="step-num">1</div><span>Main Database JSON</span></div>
+
+                    <!-- Source toggle -->
+                    <div class="btn-group w-100 mb-3" id="sourceToggle" role="group">
+                        <button type="button" class="btn btn-sm btn-outline-primary active" id="btnServer" onclick="setSource('server')">🔥 Live Firebase Firestore</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="btnFile" onclick="setSource('file')">📁 Upload File</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="btnUrl" onclick="setSource('url')">🌐 Fetch from URL</button>
+                    </div>
+
+                    <!-- File input -->
+                    <div id="fileInputWrap" style="display:none;">
+                        <input type="file" id="mainJson" class="form-control" accept=".json">
+                        <div class="form-text mt-1">Upload your local <code>database.json</code> file.</div>
+                    </div>
+
+                    <!-- URL input -->
+                    <div id="urlInputWrap" style="display:none;">
+                        <div class="input-group">
+                            <input type="text" id="dbUrl" class="form-control" placeholder="https://example.com/database.json">
+                            <button class="btn btn-primary" type="button" id="manualFetchBtn" onclick="manualFetch()">Fetch Now</button>
+                        </div>
+                        <div class="form-text mt-1">URL helper saves automatically.</div>
+                        <div id="urlStatus" class="mt-2" style="font-size: 12.5px;"></div>
+                    </div>
+
+                    <!-- Live Server (Firebase) -->
+                    <div id="serverInputWrap">
+                        <div class="alert alert-dark mb-0 py-2" style="font-size: 13px; background-color: #1e293b; border-color: rgba(255,255,255,0.05); color: #94a3b8;">
+                            🤝 Interacting directly with your live **Firebase Firestore** database. Your modifications will sync natively.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="upload-box mb-4">
+                    <div class="step-header"><div class="step-num">2</div><span>Upload Extracted Classes JSON</span></div>
+                    <input type="file" id="classesJson" class="form-control" accept=".json">
+                    <div class="form-text mt-2">Your <code>extracted_classes.json</code> array file.</div>
+                </div>
+
+                <div class="upload-box mb-4" style="border-style:solid; border-color:#e2e8f0;">
+                    <div class="step-header"><div class="step-num">3</div><span>Configuration</span></div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold" style="font-size: 13px;">Target node key</label>
+                            <input type="text" id="hscKey" class="form-control" value="fahad_sir" placeholder="e.g. hsc_2027">
+                            <div class="form-text">Key inside <code>content{}</code></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold" style="font-size: 13px;">Root title</label>
+                            <input type="text" id="hscTitle" class="form-control" value="1.Ft 27-28">
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="overwriteToggle">
+                            <label class="form-check-label fw-bold" for="overwriteToggle" style="font-size: 13px;">
+                                Overwrite target node completely
+                            </label>
+                        </div>
+                        <div class="form-text">
+                            <strong>OFF (default):</strong> Additive — only adds new entries, never removes. Thumbnails restored in both modes.<br>
+                            <strong>ON:</strong> Rebuilds the target node fresh from this file. Thumbnails still restored from old data.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 mb-2">
+                    <button class="btn btn-custom" id="processBtn">Build & Download database.json</button>
+                    <button class="btn btn-success" id="saveDirectBtn" style="border-radius:999px; padding:12px 28px; font-weight:700; font-size:15px;">🚀 Build & Save Directly to Live Firebase</button>
+                </div>
+
+                <div class="preview-box" id="previewBox">
+                    <div class="fw-bold mb-2" style="font-size: 14px;">📊 Structure Preview <span style="font-size: 11px;color: #6b7280;font-weight: 400;">🧭 = has thumbnail</span></div>
+                    <div class="counter-row" id="counterRow"></div>
+                    <div id="treePreview" style="max-height: 300px;overflow-y: auto;background: #fff;border: 1px solid #e2e8f0;border-radius: 8px;padding: 12px;"></div>
+                </div>
+
+                <div class="status-box mt-4">
+                    <div class="fw-bold mb-2" style="font-size: 14px;">💬 Processing Log</div>
+                    <div id="logs"><div class="log-item log-info">Ready to merge datasets…</div></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function pad3(n) { return String(n).padStart(3, '0'); }
+
+const logsEl        = document.getElementById('logs');
+const processBtn    = document.getElementById('processBtn');
+const saveDirectBtn = document.getElementById('saveDirectBtn');
+const previewBox    = document.getElementById('previewBox');
+const counterRow    = document.getElementById('counterRow');
+const treePreview   = document.getElementById('treePreview');
+
+let fetchedDatabaseObject = null;
+let currentSource = 'server'; // 'server' | 'file' | 'url'
+
+function addLog(msg, type = 'success') {
+    const d = document.createElement('div');
+    d.className = `log-item log-${type}`;
+    d.textContent = msg;
+    logsEl.appendChild(d);
+    logsEl.parentElement.scrollTop = logsEl.parentElement.scrollHeight;
+}
+function clearLogs() { logsEl.innerHTML = ''; }
+
+function setSource(mode) {
+    currentSource = mode;
+    document.getElementById('fileInputWrap').style.display = (mode === 'file') ? 'block' : 'none';
+    document.getElementById('urlInputWrap').style.display = (mode === 'url') ? 'block' : 'none';
+    document.getElementById('serverInputWrap').style.display = (mode === 'server') ? 'block' : 'none';
+    
+    document.getElementById('btnFile').classList.toggle('active', mode === 'file');
+    document.getElementById('btnUrl').classList.toggle('active', mode === 'url');
+    document.getElementById('btnServer').classList.toggle('active', mode === 'server');
+}
+
+function getAuthToken() {
+    return localStorage.getItem('authToken') || '';
+}
+
+async function _getApiCryptoKey(token) {
+    const raw = await crypto.subtle.digest(
+        'SHA-256',
+        new TextEncoder().encode(token + '-enc-v1')
+    );
+    return await crypto.subtle.importKey('raw', raw, { name: 'AES-CBC' }, false, ['decrypt']);
+}
+
+async function decryptAPIPayload(payload, token) {
+    if (!payload || !payload.e || !payload.i) return payload;
+    try {
+        const key = await _getApiCryptoKey(token);
+        const iv  = Uint8Array.from(atob(payload.i), c => c.charCodeAt(0));
+        const enc = Uint8Array.from(atob(payload.e), c => c.charCodeAt(0));
+        const dec = await crypto.subtle.decrypt({ name: 'AES-CBC', iv }, key, enc);
+        return JSON.parse(new TextDecoder().decode(dec));
+    } catch(err) {
+        console.error('Decryption failed:', err);
+        return payload;
+    }
+}
+
+async function manualFetch() {
+    const url = document.getElementById('dbUrl').value.trim();
+    if (!url) { addLog('Specify URL first.', 'warn'); return; }
+    addLog(`Fetching from URL: ${url}`, 'info');
+    try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Status ${res.status}`);
+        fetchedDatabaseObject = await res.json();
+        addLog('Successfully fetched!', 'success');
+    } catch(err) {
+        addLog(`Fetch failure: ${err.message}`, 'error');
+    }
+}
+
+function readFile(input) {
+    return new Promise((resolve, reject) => {
+        const file = input.files[0];
+        if (!file) return reject(new Error('No file chosen'));
+        const r = new FileReader();
+        r.onload = e => {
+            try { resolve(JSON.parse(e.target.result)); }
+            catch(err) { reject(new Error('Invalid JSON: ' + err.message)); }
+        };
+        r.onerror = () => reject(new Error('File read failed'));
+        r.readAsText(file);
+    });
+}
+
+function downloadJSON(obj, filename) {
+    const blob = new Blob([JSON.stringify(obj)], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+}
+
+// Phase 1 - Extract Thumbnails
+function extractThumbnails(node, map = {}) {
+    if (!node || typeof node !== 'object') return map;
+    const key = (node.title || '').trim().toLowerCase();
+    if (key && node.thumbnail && node.thumbnail.trim()) {
+        map[key] = node.thumbnail.trim();
+    }
+    if (node.children && typeof node.children === 'object') {
+        Object.values(node.children).forEach(child => extractThumbnails(child, map));
+    }
+    return map;
+}
+
+// Phase 2 - Merge Classes into schema
+function mergeClasses(classes, hscTitle, existingNode) {
+    const root = existingNode || {
+        title:       hscTitle,
+        thumbnail:   '',
+        type:        'category',
+        description: 'Academic to Admission Datastore',
+        isFree:      false,
+        children:    {}
+    };
+    root.title = hscTitle;
+
+    function maxKey(children) {
+        return Object.keys(children || {})
+            .map(k => parseInt(k, 10))
+            .filter(n => !isNaN(n))
+            .reduce((a, b) => Math.max(a, b), 0);
+    }
+
+    function tmap(node) {
+        if (!node._tm) {
+            node._tm = {};
+            for (const [k, v] of Object.entries(node.children || {})) {
+                if (v && v.title) node._tm[v.title.trim()] = k;
+            }
+        }
+        return node._tm;
+    }
+
+    function getOrCreate(parent, title) {
+        if (!parent.children) parent.children = {};
+        const t   = title.trim();
+        const m   = tmap(parent);
+        let   key = m[t];
+        if (!key) {
+            key  = pad3(maxKey(parent.children) + 1);
+            m[t] = key;
+            parent.children[key] = {
+                title:       t,
+                thumbnail:   '',   
+                type:        'category',
+                description: t,
+                children:    {}
+            };
+        }
+        return parent.children[key];
+    }
+
+    const sorted = [...classes].sort((a, b) => (a.id || 0) - (b.id || 0));
+
+    for (const item of sorted) {
+        const courseNode  = getOrCreate(root,        (item.course_name  || 'Uncategorised').trim());
+        const subjectNode = getOrCreate(courseNode,  (item.subject_name || 'General').trim());
+        const chapterNode = getOrCreate(subjectNode, (item.chapter_name || 'Introduction').trim());
+
+        const videoUrl = item.video_id ? `https://youtu.be/${item.video_id}` : '';
+
+        if (videoUrl && Object.values(chapterNode.children || {}).some(v => v.url === videoUrl)) continue;
+
+        const videoKey = pad3(maxKey(chapterNode.children) + 1);
+
+        let desc = '';
+        if (item.lecture_sheet) desc  = 'Lecture Sheet--> ' + item.lecture_sheet;
+        if (item.teacher_name)  desc += (desc ? '\n' : '') + 'Teacher: ' + item.teacher_name;
+
+        chapterNode.children[videoKey] = {
+            title:       (item.class_title || 'Untitled').trim(),
+            type:        'video',
+            thumbnail:   '',   
+            description: desc,
+            url:         videoUrl
+        };
+    }
+
+    function cleanup(node) {
+        delete node._tm;
+        if (node.children) Object.values(node.children).forEach(cleanup);
+    }
+    cleanup(root);
+
+    return root;
+}
+
+// Phase 3 - Restore
+function restoreThumbnails(node, thumbMap) {
+    if (!node || typeof node !== 'object') return;
+    const key   = (node.title || '').trim().toLowerCase();
+    const saved = thumbMap[key];
+    if (saved) {
+        node.thumbnail = saved;             
+    } else if (node.thumbnail === '') {
+        delete node.thumbnail;              
+    }
+    if (node.children) {
+        Object.values(node.children).forEach(c => restoreThumbnails(c, thumbMap));
+    }
+}
+
+// Unified Core Processor
+async function executeBuild() {
+    clearLogs();
+    previewBox.classList.remove('opacity-0');
+    counterRow.innerHTML  = '';
+    treePreview.innerHTML = '';
+
+    let database = null;
+    let classes = null;
+
+    // Load Database JSON
+    try {
+        if (currentSource === 'server') {
+            const token = getAuthToken();
+            if (!token) throw new Error('Unauthenticated. Log in as Admin first.');
+            const res = await fetch(`api.php?action=read&token=${token}`);
+            if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
+            const payload = await res.json();
+            database = await decryptAPIPayload(payload, token);
+            addLog('✓ Live Firebase database successfully downloaded!', 'info');
+        } else if (currentSource === 'url') {
+            if (!fetchedDatabaseObject) throw new Error('Please select URL and click Fetch first.');
+            database = JSON.parse(JSON.stringify(fetchedDatabaseObject));
+        } else {
+            database = await readFile(document.getElementById('mainJson'));
+            addLog('✓ main database.json parsed successfully!', 'info');
+        }
+    } catch(err) {
+        addLog('✗ Main Database Retrieve Failure: ' + err.message, 'error');
+        throw err;
+    }
+
+    // Load Classes JSON
+    try {
+        classes = await readFile(document.getElementById('classesJson'));
+        if (!Array.isArray(classes)) throw new Error('Root structure must be an array.');
+        addLog(`✓ extracted_classes.json parsed successfully! Found (${classes.length}) nodes.`, 'info');
+    } catch(err) {
+        addLog('✗ Extracted Classes Parsing Failure: ' + err.message, 'error');
+        throw err;
+    }
+
+    const hscKey          = (document.getElementById('hscKey').value || 'fahad_sir').trim();
+    const hscTitle        = (document.getElementById('hscTitle').value || '1.Ft 27-28').trim();
+    const shouldOverwrite = document.getElementById('overwriteToggle').checked;
+
+    if (!database.content) database.content = {};
+    const existingNode = database.content[hscKey] || null;
+
+    // Phase 1 - Extract Thumbnails
+    const thumbMap = extractThumbnails(existingNode);
+    const thumbCount = Object.keys(thumbMap).length;
+    addLog(`🔒 Phase 1 COMPLETE: Successfully indexed ${thumbCount} thumbnail hashes.`, 'info');
+
+    // Phase 2 - Merge Classes into tree
+    addLog(`🔥 Phase 2 START: Running compiler in ${shouldOverwrite ? 'Destructive Overwrite' : 'Additive Patch'} mode...`, 'info');
+    const baseNode = shouldOverwrite ? null : existingNode;
+    const merged = mergeClasses(classes, hscTitle, baseNode);
+    addLog('🔄 Phase 2 COMPLETE: Nested visual tree computed successfully.', 'info');
+
+    // Phase 3 - Restore Thumbnails
+    addLog('🎨 Phase 3 START: Applying indexed thumbnail assets to compiler tree...', 'info');
+    restoreThumbnails(merged, thumbMap);
+
+    if (existingNode && existingNode.thumbnail && existingNode.thumbnail.trim()) {
+        merged.thumbnail = existingNode.thumbnail;
+        addLog('   🎨 Kept Category Title Thumbnail asset.', 'info');
+    }
+    addLog(`✓ Phase 3 COMPLETE: Indexed thumbnail sync applied successfully.`, 'info');
+
+    database.content[hscKey] = merged;
+
+    // Render Preview
+    renderStructurePreview(merged, hscKey);
+
+    return database;
+}
+
+// Download Trigger
+processBtn.addEventListener('click', async () => {
+    try {
+        const database = await executeBuild();
+        downloadJSON(database, 'database.json');
+        addLog('✓ Compiled completely! Saved to browser downloads folder.', 'success');
+    } catch(err) {}
+});
+
+// Firebase DIRECT Save Trigger
+saveDirectBtn.addEventListener('click', async () => {
+    try {
+        const database = await executeBuild();
+        const token = getAuthToken();
+        if (!token) throw new Error('Unauthenticated. Log in to your portal.');
+
+        addLog('🚀 Committing and uploading schema up to Firebase Firestore...', 'info');
+        const res = await fetch(`api.php?action=write&token=${token}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(database)
+        });
+
+        if (!res.ok) {
+            const errBody = await res.json().catch(() => ({}));
+            throw new Error(errBody?.error || `HTTP Status ${res.status}`);
+        }
+
+        addLog('✨ SUCCESS! Merge schema written and active in your Firebase Firestore cloud database!', 'success');
+    } catch(err) {
+        addLog('✗ Firebase Direct Save Aborted: ' + err.message, 'error');
+    }
+});
+
+// Render logic
+function renderStructurePreview(finalHSC, hscKey) {
+    let subjCount = 0, chapCount = 0, vidCount = 0, thumbCount = 0;
+    let treeHTML = `<div style="font-size:12px;color:#6b7280;margin-bottom:8px;font-weight:bold;">content / ${hscKey} ${finalHSC.thumbnail ? '🧭' : ''}</div>`;
+
+    for (const [ck, cv] of Object.entries(finalHSC.children || {})) {
+        const subjects = Object.entries(cv.children || {});
+        subjCount += subjects.length;
+        let courseVids = 0, courseTree = '';
+
+        for (const [sk, sv] of subjects) {
+            const chapters = Object.entries(sv.children || {});
+            chapCount += chapters.length;
+            let sVids = 0, sTree = '';
+
+            for (const [chk, chv] of chapters) {
+                const vc = Object.keys(chv.children || {}).length;
+                vidCount += vc; sVids += vc;
+                sTree += `<div class="tree-chapter">[${chk}] ${chv.title} ${chv.thumbnail ? '🧭' : ''} <span style="color:#10b981;font-weight:600;">(${vc} vid${vc!==1?'s':''})</span></div>`;
+            }
+
+            courseVids += sVids;
+            courseTree += `<div class="tree-subject">[${sk}] ${sv.title} ${sv.thumbnail ? '🧭' : ''} <span style="font-weight:400;color:#6b7280">(${chapters.length} chap • ${sVids} vids)</span></div>${sTree}`;
+        }
+
+        treeHTML += `<div class="tree-course">[${ck}] ${cv.title} ${cv.thumbnail ? '🧭' : ''} <span style="font-weight:bold;color:#475569">(${subjects.length} subjects • ${courseVids} vids)</span></div>${courseTree}`;
+    }
+
+    const courses = Object.keys(finalHSC.children || {}).length;
+    counterRow.innerHTML = `
+        <div class="counter-card"><div class="num">${courses}</div><div class="lbl">Courses</div></div>
+        <div class="counter-card"><div class="num">${subjCount}</div><div class="lbl">Subjects</div></div>
+        <div class="counter-card"><div class="num">${chapCount}</div><div class="lbl">Chapters</div></div>
+        <div class="counter-card"><div class="num">${vidCount}</div><div class="lbl">Videos</div></div>
+    `;
+    treePreview.innerHTML = treeHTML;
+    previewBox.classList.add('visible');
+}
+</script>
+</body>
+</html>
